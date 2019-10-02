@@ -8,60 +8,157 @@ import Charts from 'fusioncharts/fusioncharts.charts';
 import Widgets from 'fusioncharts/fusioncharts.widgets';
 import ReactFC from 'react-fusioncharts';
 import FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion';
-
-ReactFC.fcRoot(FusionCharts, Charts, Widgets, FusionTheme);
-const dataSource = {
-  chart: {
-    caption: 'Countries With Most Oil Reserves [2017-18]',
-    subCaption: 'In MMbbl = One Million barrels',
-    xAxisName: 'Country',
-    yAxisName: 'Reserves (MMbbl)',
-    showrealtimevalue: "0",
-    numberSuffix: 'K',
-    theme: 'fusion',
-    setadaptiveymin: "1"
-  },
-  data: [
-    { label: 'Venezuela', value: '290' },
-    { label: 'Saudi', value: '260' },
-    { label: 'Canada', value: '180' },
-    { label: 'Iran', value: '140' },
-    { label: 'Russia', value: '115' },
-    { label: 'UAE', value: '100' },
-    { label: 'US', value: '30' },
-    { label: 'China', value: '30' }
-  ]
-};
+import RTChart from 'react-rt-chart';
+import { Line } from 'react-chartjs-2'
  
-const chartConfigs = {
-  type: 'realtimeline',
-  width: "100%",
-  height: 400,
-  dataFormat: 'json',
-  dataSource: dataSource
-};
+
 
 class Body extends Component {
-    // ...
+  constructor() {
+    super()
+    let d = new Date()
+      this.state = {
+      lineChartData: {
+            labels: [],
+            datasets: [
+              {
+                type: "line",
+                label: "BTC-USD",
+                borderWidth: "2",
+                lineTension: 0.45,
+                data: []
+              }
+            ]
+        },
+        day: d.getDay(),
+        month: d.getMonth(),
+        date: d.getDate(),
+        year: d.getFullYear(),
+        time: d.toLocaleTimeString()
+      }
+    this.countingSecond = this.countingSecond.bind(this)
+  }
+  countingSecond() {
+    const oldBtcDataSet = this.state.lineChartData.datasets[0];
+    const newBtcDataSet = { ...oldBtcDataSet };
+    newBtcDataSet.data.push(5);
+    const newChartData = {
+      ...this.state.lineChartData,
+      datasets: [newBtcDataSet],
+      labels: this.state.lineChartData.labels.concat(
+        new Date().toLocaleTimeString()
+      )
+    };
+    this.setState({ lineChartData: newChartData });
+    let d = new Date()
+    this.setState({
+      day: d.getDay(),
+      month: d.getMonth(),
+      date: d.getDate(),
+      year: d.getFullYear(),
+      time: d.toLocaleTimeString()
+    })
+  }
+  componentWillMount() {
+    console.log("hello")
+    const oldBtcDataSet = this.state.lineChartData.datasets[0];
+    const newBtcDataSet = { ...oldBtcDataSet };
+    newBtcDataSet.data.push(5);
+    const newChartData = {
+      ...this.state.lineChartData,
+      datasets: [newBtcDataSet],
+      labels: this.state.lineChartData.labels.concat(
+        new Date().toLocaleTimeString()
+      )
+    };
+   //this.setState({ lineChartData: this.state.lineChartData.concat(5) });
+    setInterval(this.countingSecond, 1000)
+  }
+  render() {
+    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "November", "December"]
+    const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+  return (
+      
+      <div className='timeclock-main'>
+        { console.log(this.state.lineChartData) }
+        <h3 className='timeclock-text'>{days[this.state.day]}, {months[this.state.month]} {this.state.date}, {this.state.year} {this.state.time}</h3>
+        <Line
+          data={this.state.lineChartData}
+        />
+      </div>
+    )
+  }
+    // constructor(props){
+    //   super(props); 
+    // let d = new Date()
+    // this.state = {
+    //   lineChartData: {
+    //     labels: [],
+    //     datasets: [
+    //       {
+    //         type: "line",
+    //         label: "BTC-USD",
+    //         borderWidth: "2",
+    //         lineTension: 0.45,
+    //         data: []
+    //       }
+    //     ]
+    //   },
+    //   day: d.getDay(),
+    //   month: d.getMonth(),
+    //   date: d.getDate(),
+    //   year: d.getFullYear(),
+    //   time: d.toLocaleTimeString()
+    // };
+    // this.countingSecond = this.countingSecond.bind(this)
+    // }
+    // countingSecond() {
+    //   let d = new Date()
+    //   this.setState({
+    //     day: d.getDay(),
+    //     month: d.getMonth(),
+    //     date: d.getDate(),
+    //     year: d.getFullYear(),
+    //     time: d.toLocaleTimeString()
+    //   })
+    // }
   
-    render() {
-      return (
-        <div className="row mt-5 mt-xs-4">
-          <div className="col-12 mb-3">
-            <div className="card-deck custom-card-deck">
-              <PriceCard
-                header="Bitcoin(BTC)"
-                src={"/bitcoin.png"}
-                alt="fireSpot"
-                label="(Price in USD)"
-                value="{this.state.btcusd}"
-              />
+    // componentDidMount(){
+    //   console.log("hello");
+    //   const oldBtcDataSet = this.state.lineChartData.datasets[0];
+    //   const newBtcDataSet = { ...oldBtcDataSet };
+    //   newBtcDataSet.data.push(5);
+    //   const newChartData = {
+    //     ...this.state.lineChartData,
+    //     datasets: [newBtcDataSet],
+    //     labels: this.state.lineChartData.labels.concat(
+    //       new Date().toLocaleTimeString()
+    //     )
+    //   };
+    //   console.log("here");
+    //   setInterval(this.countingSecond, 1000);  
+    // }
+ 
+    // render() {
+    //   return (
+    //     <div className="row mt-5 mt-xs-4">
+    //       <div className="col-12 mb-3">
+    //         <div className="card-deck custom-card-deck">
+    //           <PriceCard
+    //             header="Bitcoin(BTC)"
+    //             src={"/bitcoin.png"}
+    //             alt="fireSpot"
+    //             label="(Price in USD)"
+    //             value="{this.state.btcusd}"
+    //           />
             
-            </div>
-            <ReactFC {...chartConfigs} />
-          </div>
-        </div>
-      );
-    }
+    //         </div>
+    //         <Line
+    //           data={this.state.lineChartData}
+    //         />
+    //       </div>
+    //     </div>
+    //   );
+    // }
   }
   export default Body;
